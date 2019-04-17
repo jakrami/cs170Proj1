@@ -11,10 +11,12 @@ using namespace std;
 
 
 vector<string> splitWord(string input) {
+  bool lastWord = false;
   vector<string> output;
   int tracker = 0;
   int count = 0;
   for (int i = 0; i < input.length(); i++) {
+    
     if (input[i] == '<' || input[i] == '>' || 
         input[i] == '|' || input[i] == '&') {
 
@@ -31,6 +33,10 @@ vector<string> splitWord(string input) {
         output.push_back(temp);
         tracker = i+1;
         count = 0;
+
+        if (i == input.length() - 1) {
+          lastWord = true;
+        }
         
 
     }
@@ -38,7 +44,10 @@ vector<string> splitWord(string input) {
 
     
   }
-  output.push_back(input.substr(tracker, input.length() - tracker));
+  if (!lastWord) {
+    output.push_back(input.substr(tracker, input.length() - tracker));
+  }
+  
 
   return output;
 }
@@ -61,6 +70,7 @@ void runShell(bool dontDisplayShell) {
       string temp;
       ss >> temp;
       vector<string> supply = splitWord(temp);
+      cout << supply.size() << endl;
       for (int i = 0; i < supply.size(); i++) {
         inputTokens.push_back(supply[i]);
       }
@@ -68,15 +78,18 @@ void runShell(bool dontDisplayShell) {
     
     }
 
-    /*for (int i = 0; i < inputTokens.size(); i++) {
-      cout << inputTokens[i] << endl;
-    }*/
+    for (int i = 0; i < inputTokens.size(); i++) {
+      cout << "I: " << i << " " << inputTokens[i] << endl;
+    }
 
+    cout << inputTokens.size() << endl;
 
     // Now go through input tokens and parse it.
     bool inputArrow = false; 
     bool outputArrow = false;
     bool breaker = false;
+    bool background = false;
+    int pipecount = 0;
 
     vector<vector<string>> myList;
 
@@ -88,7 +101,8 @@ void runShell(bool dontDisplayShell) {
       //FIRST IF STATEMENT CHECKING FOR < 
       if (temp == "<") {
         if ((i == 1 || i == 0) && inputArrow == false) {
-          input = true;
+          inputArrow = true;
+          continue;
         } else {
           cout << "ERROR: Can only use < at beginning of input and only once" << endl;
           breaker = true;
@@ -97,11 +111,57 @@ void runShell(bool dontDisplayShell) {
       }
 
       // SECOND IF STATEMENT THAT COUNTS HOW MANY PIPES WE NEED
+      if (temp == "|") {
+
+        vector<string> inserter;
+        for (int i = 0; i < charArray.size(); i++) {
+          inserter.push_back(charArray[i]);
+        }
+        myList.push_back(inserter);
+        charArray.clear();
+        pipecount++;
+        continue;
+      }
+    
       
 
+      // THIRD IF STATEMENT THAT SEES IF NEED TO REDIRECT OUTPUT
+      if (temp == ">") {
+        if (outputArrow == false && (i == inputTokens.size() - 3 || i == inputTokens.size() - 2)) {
+          outputArrow = true;
+          continue;
+
+        } else {
+
+          cout << "ERROR: CAN ONLY USE > ONCE AND AS THE LAST COMMAND" << endl;
+          breaker = true;
+          break;
+        }
+      }
+
+      // Check TO SEE IF WE NEEDA RUN IN BACKGROUND
+      
+      if (temp == "&") {
+        if (i == inputTokens.size() - 1) {
+          background = true;
+          continue;
+        } else {
+          cout << temp << endl;
+          cout << "ERROR: CAN ONLY USE & AT END OF STATEMENT" << endl;
+          breaker = true;
+          break;
+        }
+       
+
+      }
+
+    charArray.push_back(temp);
 
 
-    }
+
+    
+
+  }
     if (breaker) {
       if (!dontDisplayShell) {
         cout << "shell: " << endl;
