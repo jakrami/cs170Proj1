@@ -15,6 +15,15 @@
 using namespace std;
 
 
+/*void doSingularExec(char* args) {
+  int status;
+  if (fork() > 0) {
+    waitpid(-1, &status, 0);
+
+  } else {
+    execvp(args[0], args);
+  }
+}*/
 void doPipes(char*** finalArrays) {
   cout << "IN THIS FUNCTION" << endl;
   int status;
@@ -32,6 +41,7 @@ void doPipes(char*** finalArrays) {
         finalArrays++;
         //exit(status);
     } else {
+      cout << "am i in here" << endl;
       dup2(pipeIn, 0);
       if (*(finalArrays + 1) != nullptr) {
         dup2(pipes[1], 1);
@@ -297,7 +307,22 @@ if (outputArrow) {
 
 //NOW SET UP PIPES
 
-doPipes(finalArrays);
+if (myList.size() == 1) {
+  int status;
+  char* execList = *finalArrays[0];
+  if (fork() > 0) {
+      waitpid(-1, &status, 0);
+      //exit(status);
+    } else {
+      cout << "in child process" << endl;
+      //cout << "output: " << execvp(execList[0], execList) << endl;
+    }
+
+} else {
+  doPipes(finalArrays);
+}
+
+
 
 //in = open(inputFile, O_RDONLY);
 
