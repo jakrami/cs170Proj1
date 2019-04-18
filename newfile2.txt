@@ -1,0 +1,2 @@
+in child process
+-rw-r--r-- 1 jakrami ugrad 17 Apr 17  2019 newfile2.txt

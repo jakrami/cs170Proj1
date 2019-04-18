@@ -1,0 +1,3 @@
+argv[0]: ls
+file.txt
+file.txt

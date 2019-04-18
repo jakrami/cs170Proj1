@@ -1,0 +1,11 @@
+argv[0]: ls
+file2.txt
+file3.txt
+file4.txt
+file7.txt
+file.txt
+main
+main.cpp
+newfile2.txt
+output.txt
+Untitled.ipynb

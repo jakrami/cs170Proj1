@@ -1,0 +1,2 @@
+in child process
+file3.txt
